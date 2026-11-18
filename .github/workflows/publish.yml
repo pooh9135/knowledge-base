@@ -1,0 +1,132 @@
+name: Publish Knowledge_Base
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 連続して push されたときは、古いビルドをキャンセルして最新だけを公開する
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  QUARTZ_VERSION: v4.5.2
+  SITE_TITLE: Knowledge_Base
+  # 公開するフォルダ（Vault 直下からの相対パス）。
+  # 空のときは自動判定：Vault に「共有」フォルダがあれば "共有"、なければ "."（Vault 全体）。
+  # リポジトリの Settings > Secrets and variables > Actions > Variables で SHARE_DIR を設定すると上書きできる。
+  SHARE_DIR: ${{ vars.SHARE_DIR }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout vault
+        uses: actions/checkout@v4
+        with:
+          path: vault
+          fetch-depth: 0 # 更新日時を git 履歴から出すため全履歴を取得
+
+      - name: Checkout Quartz
+        uses: actions/checkout@v4
+        with:
+          repository: jackyzha0/quartz
+          ref: ${{ env.QUARTZ_VERSION }}
+          path: quartz
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: quartz/package-lock.json
+
+      - name: Install Quartz dependencies
+        working-directory: quartz
+        run: npm ci
+
+      - name: Decide publish folder
+        id: share
+        run: |
+          dir="$SHARE_DIR"
+          if [ -z "$dir" ]; then
+            if [ -d "vault/共有" ]; then dir="共有"; else dir="."; fi
+          fi
+          if [ ! -d "vault/$dir" ]; then
+            echo "::error::公開フォルダ vault/$dir が見つかりません"
+            exit 1
+          fi
+          echo "公開フォルダ: $dir"
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+          echo "path=$GITHUB_WORKSPACE/vault/$dir" >> "$GITHUB_OUTPUT"
+
+      - name: Generate top page if missing
+        env:
+          CONTENT_DIR: ${{ steps.share.outputs.path }}
+        run: |
+          if [ ! -f "$CONTENT_DIR/index.md" ]; then
+            echo "index.md が無いため、トップページを自動生成します"
+            cat > "$CONTENT_DIR/index.md" <<EOF
+          ---
+          title: ${SITE_TITLE}
+          ---
+
+          チームのナレッジベースへようこそ。
+
+          左のエクスプローラーや検索（右上の🔍）からノートを探せます。
+          EOF
+          fi
+
+      - name: Configure Quartz
+        working-directory: quartz
+        env:
+          BASE_URL: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: |
+          node - <<'JS'
+          const fs = require("fs")
+          const file = "quartz.config.ts"
+          let src = fs.readFileSync(file, "utf8")
+          const baseUrl = process.env.BASE_URL.toLowerCase()
+          const edits = [
+            [/pageTitle: ".*?",/, `pageTitle: ${JSON.stringify(process.env.SITE_TITLE)},`],
+            [/locale: ".*?",/, `locale: "ja-JP",`],
+            [/baseUrl: ".*?",/, `baseUrl: ${JSON.stringify(baseUrl)},`],
+            [/ignorePatterns: \[.*?\],/, `ignorePatterns: ["private", "templates", ".obsidian", ".trash", ".github"],`],
+            [/^\s*Plugin\.CustomOgImages\(\),\s*$/m, "      // Plugin.CustomOgImages(), // 反映を速くするため無効化"],
+          ]
+          for (const [re, rep] of edits) {
+            if (!re.test(src)) {
+              console.error(`::error::quartz.config.ts に ${re} が見つかりません`)
+              process.exit(1)
+            }
+            src = src.replace(re, rep)
+          }
+          fs.writeFileSync(file, src)
+          JS
+          grep -nE 'pageTitle|locale|baseUrl|ignorePatterns|CustomOgImages' quartz.config.ts
+
+      - name: Build site
+        working-directory: quartz
+        run: npx quartz build -d "${{ steps.share.outputs.path }}"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: quartz/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
