@@ -1,3 +1,16 @@
+# ─────────────────────────────────────────────
+# GitHub に送る（＝Webサイトに公開する）のは、下で「!」を付けたものだけ。
+# それ以外のフォルダ・ノート・.obsidian は GitHub に送られない。
+# 公開フォルダを増やすときは「!/フォルダ名/」の行を足す。
+# ─────────────────────────────────────────────
+/*
+!/.github/
+!/.gitignore
+!/公開の仕組み.md
+!/LizArc/
+!/Liz Atlas/
+
+# 念のための除外
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .trash/
