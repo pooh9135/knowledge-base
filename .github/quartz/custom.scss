@@ -13,8 +13,8 @@
   --ob-text-normal: #222222;
   --ob-text-muted: #5c5c5c;
   --ob-text-faint: #ababab;
-  --ob-accent: #8a5cf5; // hsl(258, 88%, 66%)
-  --ob-text-accent: #7d4af3;
+  --ob-accent: #9175ff; // Vault のアクセントカラー
+  --ob-text-accent: #7a5cff;
   --ob-hover: rgba(0, 0, 0, 0.075);
   --ob-active: rgba(0, 0, 0, 0.1);
   --ob-cover: rgba(220, 220, 220, 0.4);
@@ -23,16 +23,17 @@
   --ob-scrollbar: rgba(0, 0, 0, 0.1);
   --ob-scrollbar-hover: rgba(0, 0, 0, 0.2);
 
-  --ob-font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter",
+  // フォントは Vault の設定（外観 → フォント：Arial Black）に合わせる。日本語はシステムの日本語フォントで表示
+  --ob-font: "Arial Black", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter",
     "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", Meiryo, "Apple Color Emoji",
     "Segoe UI Emoji", sans-serif;
-  --ob-font-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", "Roboto Mono", "DejaVu Sans Mono",
+  --ob-font-mono: "Arial Black", ui-monospace, SFMono-Regular, "Cascadia Mono", "Roboto Mono", "DejaVu Sans Mono",
     "Liberation Mono", Menlo, Monaco, Consolas, "Source Code Pro", monospace;
 
-  --ob-ribbon-w: 44px;
+  --ob-ribbon-w: 48px;
   --ob-left-w: 260px;
   --ob-right-w: 300px;
-  --ob-header-h: 40px;
+  --ob-header-h: 48px;
   --ob-line-width: none; // Obsidian の「行の長さを制限」をオフにした状態（画面幅いっぱいに表示）
 
   // Quartz が使う変数を Obsidian の色に合わせる（グラフや検索もこの色になる）
@@ -58,8 +59,8 @@
   --ob-text-normal: #dadada;
   --ob-text-muted: #b3b3b3;
   --ob-text-faint: #666666;
-  --ob-accent: #8a5cf5;
-  --ob-text-accent: #9268f5; // hsl(258, 88%, 68.5%)
+  --ob-accent: #9175ff;
+  --ob-text-accent: #9a80ff;
   --ob-hover: rgba(255, 255, 255, 0.075);
   --ob-active: rgba(255, 255, 255, 0.1);
   --ob-cover: rgba(10, 10, 10, 0.4);
@@ -600,7 +601,7 @@ body {
 
 // インラインタイトル（ノート名）
 h1.article-title {
-  font-size: 1.802em;
+  font-size: calc(19px * 1.802);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.015em;
@@ -609,7 +610,7 @@ h1.article-title {
 }
 
 article {
-  font-size: 16px;
+  font-size: 19px; // Vault の設定：文字サイズ 19
   line-height: 1.5;
   color: var(--ob-text-normal);
 
@@ -1317,5 +1318,404 @@ html.ob-right-collapsed .graph > .global-graph-outer > .global-graph-container {
 @media all and ($mobile) {
   .center > .popover-hint {
     padding: 0 0 4rem;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Sodalite テーマ（tomzorz/Sodalite v0.10.0）に合わせた見た目
+// Vault で使っているテーマ。上の既定テーマの見た目を、ここで Sodalite の値に上書きする。
+// ════════════════════════════════════════════════════════════════════════════
+:root {
+  --sd-titlebar-h: 24px;
+  --sd-note-header-h: 56px;
+  --sd-heading-font: "Futura Md BT", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, "Yu Gothic UI", "Hiragino Sans", Meiryo, sans-serif;
+
+  // ライト（Sodalite はダーク専用なので、同じ雰囲気の明るい色を用意）
+  --sd-accent: #4d6fa8;
+  --sd-accent-muted: #b9c9e4;
+  --sd-text-muted: #444444;
+  --sd-text-faint: #8a8a8a;
+  --sd-tab-active: #111111;
+  --sd-border: #d6dae2;
+  --sd-base-bg-start: #eceef3;
+  --sd-base-bg-end: #e8eded;
+  --sd-content-bg-start: #f3f5f9;
+  --sd-content-bg-end: #f2f2f3;
+  --sd-overlay-bg: rgba(0, 0, 0, 0.04);
+  --sd-overlay-border: rgba(0, 0, 0, 0.08);
+  --sd-sheen: rgba(0, 0, 0, 0.03);
+  --sd-selected: rgba(0, 0, 0, 0.06);
+  --sd-graph-line: #c4c8d4;
+
+  --sd-gradient-base: linear-gradient(135deg, var(--sd-base-bg-start), var(--sd-base-bg-end));
+  --sd-gradient-content: linear-gradient(135deg, var(--sd-content-bg-start), var(--sd-content-bg-end));
+  --sd-gradient-glass: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--sd-content-bg-start) 30%, transparent),
+    color-mix(in srgb, var(--sd-content-bg-end) 30%, transparent)
+  );
+  --sd-gradient-subtle: linear-gradient(160deg, transparent, var(--sd-sheen));
+  --sd-shadow-active: 0 0 3px 1px rgba(0, 0, 0, 0.15);
+  --sd-shadow-popover: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.132), 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.108);
+  --sd-shadow-modal: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
+
+}
+
+// グラフの線の色（Quartz の配色設定より優先させるため、指定を強めている）
+:root:root {
+  --lightgray: var(--sd-graph-line);
+}
+
+:root[saved-theme="dark"] {
+  // Sodalite の値そのまま
+  --sd-accent: #8ba4cc;
+  --sd-accent-muted: #304f80;
+  --sd-text-muted: #cacaca;
+  --sd-text-faint: #909090;
+  --sd-tab-active: #ffffff;
+  --sd-border: #1a1f28;
+  --sd-base-bg-start: #202028;
+  --sd-base-bg-end: #1b2020;
+  --sd-content-bg-start: #222832;
+  --sd-content-bg-end: #212223;
+  --sd-overlay-bg: rgba(255, 255, 255, 0.05);
+  --sd-overlay-border: rgba(255, 255, 255, 0.08);
+  --sd-sheen: rgba(255, 255, 255, 0.02);
+  --sd-selected: rgba(255, 255, 255, 0.1);
+  --sd-graph-line: #404050;
+  --sd-shadow-active: 0 0 3px 1px rgba(0, 0, 0, 0.5);
+}
+:root:root[saved-theme="dark"] {
+  --lightgray: var(--sd-graph-line);
+}
+
+// 左サイドバー（検索の画面を含む）を、ノートの見出しより前面に置く
+// （Quartz の検索は開くときにサイドバーへ z-index:1 を直接書き込むので !important で上書き）
+.page > #quartz-body > .sidebar.left {
+  z-index: 4 !important;
+}
+
+html,
+body {
+  background: var(--sd-gradient-base) fixed;
+}
+
+::selection {
+  background-color: var(--sd-accent-muted);
+}
+:root[saved-theme="dark"] ::selection {
+  color: #ffffff;
+}
+
+// 細いスクロールバー（角なし）
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  border: 0;
+  border-radius: 0;
+}
+
+// ─────────── 上部のタイトル帯（ウィンドウ名＋ステータスバー） ───────────
+.ob-titlebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--sd-titlebar-h);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  padding-left: 64px;
+  font-size: 12px;
+  line-height: var(--sd-titlebar-h);
+  color: var(--ob-text-normal);
+  background: var(--sd-gradient-base) fixed;
+  white-space: nowrap;
+  overflow: hidden;
+
+  & .ob-titlebar-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  & .ob-titlebar-theme {
+    opacity: 0.5;
+  }
+  & .ob-status-bar {
+    position: static;
+    margin-left: auto;
+    padding: 0 12px;
+    background: none;
+    border: none;
+    border-radius: 0;
+    font-size: 12px;
+    color: var(--sd-text-muted);
+    flex-shrink: 0;
+  }
+}
+@media (max-width: 1280px) {
+  .ob-titlebar .ob-status-bar {
+    display: none;
+  }
+}
+
+// ─────────── 全体の枠（グラデーションと 2px の境界線） ───────────
+@media all and not ($mobile) {
+  .page {
+    padding-top: var(--sd-titlebar-h);
+  }
+
+  .page > #quartz-body {
+    & .sidebar {
+      top: var(--sd-titlebar-h);
+      height: calc(100vh - var(--sd-titlebar-h));
+      background: var(--sd-gradient-content) fixed;
+      border-top: 2px solid var(--sd-border);
+      box-sizing: border-box;
+    }
+    & .sidebar.left {
+      border-left: 2px solid var(--sd-border);
+      border-right: none;
+      border-top-left-radius: 8px;
+    }
+    & .sidebar.right {
+      height: calc(100vh - var(--sd-titlebar-h));
+      border-left: none;
+    }
+    & > .center {
+      background: var(--ob-bg-primary); // ノートの部分は Obsidian の暗い背景のまま（Sodalite の仕様）
+      border-left: 2px solid var(--sd-border);
+      border-right: 2px solid var(--sd-border);
+    }
+  }
+  html.ob-left-collapsed .page > #quartz-body > .center,
+  html.ob-left-collapsed .page > #quartz-body > .center .ob-tabbar {
+    border-top-left-radius: 8px;
+  }
+
+  .center > .page-header > header {
+    top: var(--sd-titlebar-h);
+    background: transparent;
+  }
+
+  .graph > .global-graph-outer > .global-graph-container {
+    top: var(--sd-titlebar-h);
+  }
+}
+
+// リボン：背景なし・境界線なし
+.ob-ribbon {
+  top: var(--sd-titlebar-h);
+  background: transparent;
+  border-right: none;
+  & .clickable-icon {
+    color: var(--sd-text-muted);
+  }
+}
+
+// サイドバー上部のツールバー
+.ob-tab-header {
+  border-bottom: 2px solid var(--sd-border);
+  background-image: var(--sd-gradient-subtle);
+  padding: 4px 6px;
+  & .clickable-icon {
+    color: var(--sd-text-muted);
+  }
+}
+
+.ob-vault-profile {
+  border-top: 2px solid var(--sd-border);
+  background: transparent;
+}
+
+// ─────────── ファイル一覧 ───────────
+.sidebar.left .explorer {
+  & .explorer-content {
+    padding: 4px 4px 16px;
+  }
+  & .explorer-content ul li > a,
+  & .folder-container {
+    border-radius: 0;
+    color: var(--sd-text-muted);
+  }
+  & .explorer-content ul li > a {
+    padding-left: 22px;
+    border: 1px solid transparent;
+    &:hover {
+      background-color: var(--sd-overlay-bg);
+    }
+    // 開いているノート：枠と影で浮き出る
+    &.active {
+      margin: 4px 0;
+      font-weight: bold;
+      background-color: var(--sd-overlay-bg);
+      border-color: var(--sd-overlay-border);
+      box-shadow: var(--sd-shadow-active);
+    }
+    &::before {
+      content: "📝 ";
+      white-space: pre;
+    }
+  }
+  & .folder-container:hover {
+    background-color: var(--sd-overlay-bg);
+  }
+  // フォルダ：閉じているとき 📁、開いているとき 📂
+  & .folder-container .folder-title::before {
+    content: "📁 ";
+    white-space: pre;
+  }
+  & li:has(> .folder-outer.open) > .folder-container .folder-title::before {
+    content: "📂 ";
+  }
+  & .folder-outer > ul {
+    border-left-color: var(--sd-border);
+  }
+}
+
+// ─────────── タブバー（四角いタブ。開いているタブはノートとつながる） ───────────
+.ob-tabbar {
+  align-items: stretch;
+  padding: 0 44px 0 0;
+  background: var(--sd-gradient-subtle), var(--sd-gradient-content);
+  background-attachment: scroll, fixed;
+  border-top: 2px solid var(--sd-border);
+  border-bottom: 2px solid var(--sd-border);
+
+  & .ob-tabs {
+    align-items: stretch;
+    gap: 0;
+  }
+  & .ob-tab {
+    height: auto;
+    margin: 0 0 -2px;
+    padding: 0 6px 0 8px;
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid var(--sd-border);
+    color: var(--sd-text-faint);
+    &.is-active {
+      background: var(--ob-bg-primary);
+      color: var(--sd-tab-active);
+      border: none;
+      border-right: 2px solid var(--sd-border);
+    }
+  }
+}
+
+// 右サイドバーの開閉ボタン（タブバーの右端の高さに置く）
+.ob-right-toggle {
+  top: calc(var(--sd-titlebar-h) + (var(--ob-header-h) - 26px) / 2);
+  color: var(--sd-text-muted);
+}
+
+// ─────────── ノートの見出し（大きなノート名。フォルダ名は出さない） ───────────
+.ob-view-header {
+  height: var(--sd-note-header-h);
+  background-image: var(--sd-gradient-glass);
+  background-attachment: fixed;
+  background-color: transparent;
+  backdrop-filter: blur(18px);
+
+  & .ob-view-actions {
+    width: auto;
+  }
+  & .ob-view-title {
+    justify-content: flex-start;
+    & .ob-crumb,
+    & .ob-crumb-sep {
+      display: none;
+    }
+    & .ob-crumb-current {
+      font-family: var(--sd-heading-font);
+      font-size: 38px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--ob-text-normal);
+      translate: 0 -0.08em;
+    }
+  }
+}
+
+article :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: calc(var(--sd-titlebar-h) + var(--ob-header-h) + var(--sd-note-header-h) + 16px);
+}
+
+.center > .page-header > .popover-hint {
+  padding-top: 8px;
+}
+
+// ─────────── 本文 ───────────
+.ob-properties {
+  margin-bottom: 1rem;
+}
+
+.callout {
+  border-radius: 0;
+  padding: 18px;
+}
+
+// ─────────── 右サイドバー ───────────
+.ob-tree-item,
+a.ob-tree-item.internal {
+  border-radius: 0;
+  color: var(--sd-text-muted);
+  &:hover {
+    background-color: var(--sd-overlay-bg);
+  }
+}
+
+// ─────────── 検索・プレビュー・通知（すりガラス） ───────────
+.search > .search-container {
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  & > .search-space {
+    background: var(--sd-gradient-base);
+    border: 2px solid var(--sd-border);
+    border-radius: 8px;
+    box-shadow: var(--sd-shadow-modal);
+    & > input.search-bar {
+      border-bottom: 2px solid var(--sd-border);
+    }
+    & > .search-layout .result-card {
+      border-radius: 0;
+      &:hover,
+      &.focus {
+        background: linear-gradient(160deg, transparent, var(--sd-selected));
+      }
+    }
+    &::after {
+      border-top: 2px solid var(--sd-border);
+    }
+  }
+}
+
+.popover > .popover-inner {
+  border: 2px solid var(--sd-border);
+  box-shadow: var(--sd-shadow-popover);
+}
+
+.ob-notice {
+  background: linear-gradient(160deg, transparent, rgba(255, 255, 255, 0.05)),
+    color-mix(in srgb, var(--sd-accent-muted) 30%, var(--ob-bg-primary));
+  border: 2px solid var(--sd-border);
+  backdrop-filter: blur(18px);
+}
+
+// ─────────── 一覧ページ ───────────
+.page-listing .section-li {
+  border-bottom-color: var(--sd-border);
+}
+
+// ─────────── スマホ ───────────
+@media all and ($mobile) {
+  .ob-titlebar {
+    display: none;
+  }
+  .ob-view-header .ob-view-title .ob-crumb-current {
+    font-size: 26px;
   }
 }
