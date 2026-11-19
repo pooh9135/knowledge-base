@@ -33,7 +33,7 @@
   --ob-left-w: 260px;
   --ob-right-w: 300px;
   --ob-header-h: 40px;
-  --ob-line-width: 700px;
+  --ob-line-width: none; // Obsidian の「行の長さを制限」をオフにした状態（画面幅いっぱいに表示）
 
   // Quartz が使う変数を Obsidian の色に合わせる（グラフや検索もこの色になる）
   --light: var(--ob-bg-primary);
@@ -702,12 +702,18 @@ article {
   & table {
     border-collapse: collapse;
     margin: 1em 0;
-    font-size: 16px;
+    font-size: 15px;
+    & > * {
+      line-height: 1.45 !important;
+    }
     & th,
     & td {
       border: 1px solid var(--ob-border);
-      padding: 4px 8px;
+      padding: 6px 8px;
       text-align: left;
+      vertical-align: top;
+      min-width: 0 !important;
+      line-height: 1.45;
     }
     & th {
       font-weight: 600;
@@ -720,16 +726,29 @@ article {
 
   & .table-container {
     margin: 1em 0;
+    & > table {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
   }
 
-  // コード
+  // 本文の行間（Quartz の 1.6rem 固定をやめて Obsidian と同じ 1.5 に）
+  & p,
+  & li,
+  & tbody {
+    line-height: 1.5;
+  }
+
+  // コード（インライン）：目立ちすぎないように本文と同じ色で、背景だけ付ける
   & code {
     font-family: var(--ob-font-mono);
     font-size: 0.875em;
     background-color: var(--ob-bg-primary-alt);
-    color: #e83e8c;
+    color: var(--ob-text-normal);
     border-radius: 4px;
-    padding: 0.1em 0.25em;
+    padding: 0.1em 0.3em;
+    overflow-wrap: anywhere;
   }
   & pre {
     background-color: var(--ob-bg-primary-alt);
@@ -750,7 +769,7 @@ article {
 }
 
 :root[saved-theme="dark"] article code {
-  color: #e5c07b;
+  background-color: #2b2b2b;
 }
 article pre code,
 :root[saved-theme="dark"] article pre code {
