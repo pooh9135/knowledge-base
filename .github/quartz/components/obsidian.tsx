@@ -133,7 +133,6 @@ export const VaultProfile = (() => {
           <span class="ob-vault-name">{cfg.pageTitle}</span>
         </a>
         <div class="ob-vault-actions">
-          <IconButton icon="circle-help" label="ヘルプ（公開の仕組み）" href={`${home}/公開の仕組み`} />
           <IconButton icon="sun" label="ライトモードにする" action="theme" cls="ob-theme-to-light" />
           <IconButton icon="moon" label="ダークモードにする" action="theme" cls="ob-theme-to-dark" />
         </div>
