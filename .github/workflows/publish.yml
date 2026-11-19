@@ -17,7 +17,7 @@ concurrency:
 
 env:
   QUARTZ_VERSION: v4.5.2
-  SITE_TITLE: Knowledge_Base
+  SITE_TITLE: Obsidian
   # 公開するフォルダ（Vault 直下からの相対パス）。
   # 空のときは自動判定：Vault に「共有」フォルダがあれば "共有"、なければ "."（Vault 全体）。
   # リポジトリの Settings > Secrets and variables > Actions > Variables で SHARE_DIR を設定すると上書きできる。
@@ -87,33 +87,16 @@ jobs:
         working-directory: quartz
         env:
           BASE_URL: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
-        run: |
-          node - <<'JS'
-          const fs = require("fs")
-          const file = "quartz.config.ts"
-          let src = fs.readFileSync(file, "utf8")
-          const baseUrl = process.env.BASE_URL.toLowerCase()
-          const edits = [
-            [/pageTitle: ".*?",/, `pageTitle: ${JSON.stringify(process.env.SITE_TITLE)},`],
-            [/locale: ".*?",/, `locale: "ja-JP",`],
-            [/baseUrl: ".*?",/, `baseUrl: ${JSON.stringify(baseUrl)},`],
-            [/ignorePatterns: \[.*?\],/, `ignorePatterns: ["private", "templates", ".obsidian", ".trash", ".github"],`],
-            [/^\s*Plugin\.CustomOgImages\(\),\s*$/m, "      // Plugin.CustomOgImages(), // 反映を速くするため無効化"],
-          ]
-          for (const [re, rep] of edits) {
-            if (!re.test(src)) {
-              console.error(`::error::quartz.config.ts に ${re} が見つかりません`)
-              process.exit(1)
-            }
-            src = src.replace(re, rep)
-          }
-          fs.writeFileSync(file, src)
-          JS
-          grep -nE 'pageTitle|locale|baseUrl|ignorePatterns|CustomOgImages' quartz.config.ts
+        # タイトル・言語・URL・見た目・Web 上の表示名などを .github/quartz/ の設定で書き換える
+        run: node ../vault/.github/quartz/setup.mjs .
 
       - name: Build site
         working-directory: quartz
         run: npx quartz build -d "${{ steps.share.outputs.path }}"
+
+      - name: Rename folders for the web
+        # LizArc → AI建築 などの表示名の置き換え（.github/quartz/web-names.json）
+        run: node vault/.github/quartz/postbuild.mjs quartz/public vault/.github/quartz/web-names.json
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

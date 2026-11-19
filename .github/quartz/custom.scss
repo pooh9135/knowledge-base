@@ -1,0 +1,279 @@
+// Knowledge_Base 用の見た目（ビルド時に Quartz の quartz/styles/custom.scss を置き換える）
+// コンセプト：Zen Browser 風。落ち着いた背景の上に、角の丸い本文カードが浮かぶ。アクセントは Obsidian の紫。
+@use "./base.scss";
+@use "./variables.scss" as *;
+
+// ───────── 配色 ─────────
+:root {
+  --light: #f3f2f7; // ページの背景
+  --card: #ffffff; // 本文カード
+  --lightgray: #e3e0ec;
+  --gray: #9d99ad;
+  --darkgray: #3e3b4a;
+  --dark: #1e1c26;
+  --secondary: #7c4dff;
+  --tertiary: #a882ff;
+  --highlight: rgba(124, 77, 255, 0.08);
+  --textHighlight: rgba(168, 130, 255, 0.35);
+  --accent: #8a5cf5;
+  --hover: rgba(124, 77, 255, 0.08);
+  --shadow: 0 1px 2px rgba(30, 20, 60, 0.04), 0 8px 28px rgba(30, 20, 60, 0.06);
+}
+
+:root[saved-theme="dark"] {
+  --light: #141318;
+  --card: #1c1b22;
+  --lightgray: #2d2b36;
+  --gray: #74708a;
+  --darkgray: #cfcbdc;
+  --dark: #eeecf5;
+  --secondary: #b294ff;
+  --tertiary: #a882ff;
+  --highlight: rgba(168, 130, 255, 0.1);
+  --textHighlight: rgba(168, 130, 255, 0.35);
+  --accent: #a882ff;
+  --hover: rgba(255, 255, 255, 0.06);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35);
+}
+
+body {
+  background-color: var(--light);
+}
+
+::selection {
+  background: var(--textHighlight);
+}
+
+// 目次で飛んだとき、見出しが画面のふちに張り付かないように
+article :is(h1, h2, h3, h4, h5, h6)[id] {
+  scroll-margin-top: 1.5rem;
+}
+
+// ───────── サイト名（紫） ─────────
+.page-title {
+  font-size: 1.9rem;
+  letter-spacing: 0.01em;
+  & a {
+    color: var(--accent);
+    background: linear-gradient(135deg, #a882ff 0%, #7c4dff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+// ───────── 本文カード ─────────
+@media all and ($desktop), all and ($tablet) {
+  .page > #quartz-body > .center {
+    background: var(--card);
+    border: 1px solid var(--lightgray);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    margin: 1rem 0;
+    padding: 2.5rem 3rem 1.5rem;
+    min-height: calc(100vh - 2rem);
+    box-sizing: border-box;
+
+    & > .page-header {
+      margin-top: 0;
+    }
+  }
+}
+
+@media all and ($mobile) {
+  .page > #quartz-body > .center {
+    background: var(--card);
+    border: 1px solid var(--lightgray);
+    border-radius: 14px;
+    padding: 1.25rem 1rem;
+  }
+}
+
+// ───────── サイドバー ─────────
+.page > #quartz-body .sidebar {
+  padding-top: 2.5rem;
+}
+
+// 右サイドバーは縦にスクロールできるように（長い目次でも最後まで押せる）
+@media all and ($desktop) {
+  .page > #quartz-body .sidebar.right {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--lightgray) transparent;
+  }
+}
+
+.sidebar h3,
+.explorer .title-button h2,
+.toc .toc-header h3,
+.backlinks > h3 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gray);
+}
+
+// エクスプローラー：Zen のタブ一覧のような丸いピル
+.explorer {
+  & .explorer-content ul li > a,
+  & .folder-container {
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+  }
+
+  & .explorer-content ul li > a {
+    display: block;
+    padding: 0.28rem 0.6rem;
+    color: var(--darkgray);
+    opacity: 1;
+    &:hover {
+      background-color: var(--hover);
+      color: var(--dark);
+    }
+    &.active {
+      background-color: var(--highlight);
+      color: var(--accent);
+      font-weight: 600;
+    }
+  }
+
+  & .folder-container {
+    padding: 0.18rem 0.35rem;
+    &:hover {
+      background-color: var(--hover);
+    }
+    & .folder-title,
+    & .folder-button span {
+      color: var(--dark);
+      font-weight: 600;
+    }
+    & svg {
+      color: var(--gray);
+    }
+  }
+
+  & ul.explorer-ul {
+    gap: 0.1rem;
+  }
+
+  & .folder-outer > ul {
+    border-left: 1px solid var(--lightgray);
+    margin-left: 0.85rem;
+    padding-left: 0.4rem;
+  }
+}
+
+// 検索ボックス：丸い入力欄
+.search > .search-button {
+  border-radius: 10px;
+  background-color: var(--card);
+  border: 1px solid var(--lightgray);
+  height: 2.2rem;
+  &:hover {
+    border-color: var(--tertiary);
+  }
+}
+
+.search > .search-container > .search-space {
+  border-radius: 16px;
+  border: 1px solid var(--lightgray);
+  background: var(--card);
+  & > * {
+    border-radius: 10px;
+  }
+}
+
+// 目次：今読んでいる見出しを紫で強調
+.toc {
+  & ul.toc-content > li > a {
+    border-radius: 6px;
+    padding: 0.1rem 0.4rem;
+    margin-left: -0.4rem;
+    opacity: 0.6;
+    transition:
+      opacity 0.15s ease,
+      background-color 0.15s ease;
+    &:hover {
+      opacity: 1;
+      background-color: var(--hover);
+    }
+    &.in-view {
+      opacity: 1;
+      color: var(--accent);
+    }
+  }
+}
+
+// グラフ：角丸の枠
+.graph > .graph-outer {
+  border-radius: 14px;
+  border: 1px solid var(--lightgray);
+  background: var(--card);
+}
+
+.graph > .global-graph-outer {
+  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--light) 70%, transparent);
+  & > .global-graph-container {
+    border-radius: 18px;
+    border: 1px solid var(--lightgray);
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+}
+
+// ───────── 本文 ─────────
+article {
+  line-height: 1.85;
+}
+
+a.internal {
+  background-color: transparent;
+  color: var(--accent);
+  border-radius: 4px;
+  padding: 0 0.1rem;
+  &:hover {
+    background-color: var(--highlight);
+  }
+}
+
+.tags > li > a.internal.tag-link {
+  background-color: var(--highlight);
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.breadcrumb-container {
+  & .breadcrumb-element a {
+    color: var(--gray);
+    &:hover {
+      color: var(--accent);
+    }
+  }
+}
+
+pre,
+code {
+  border-radius: 8px;
+}
+
+.callout {
+  border-radius: 12px;
+}
+
+table {
+  border-radius: 10px;
+}
+
+img {
+  border-radius: 12px;
+}
+
+hr {
+  background-color: var(--lightgray);
+}
+
+footer {
+  opacity: 0.6;
+}

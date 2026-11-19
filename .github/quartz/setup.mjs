@@ -1,0 +1,56 @@
+// Quartz 本体をこのサイト用に書き換える（GitHub Actions のビルド前に実行）
+// 使い方: node setup.mjs <quartz フォルダ>
+// 環境変数: SITE_TITLE（サイト名）, BASE_URL（例: user.github.io/knowledge-base）
+import fs from "node:fs"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
+
+const here = path.dirname(fileURLToPath(import.meta.url))
+const quartzDir = process.argv[2]
+const siteTitle = process.env.SITE_TITLE
+const baseUrl = (process.env.BASE_URL ?? "").toLowerCase()
+
+if (!quartzDir || !siteTitle || !baseUrl) {
+  console.error("::error::使い方: SITE_TITLE=... BASE_URL=... node setup.mjs <quartz フォルダ>")
+  process.exit(1)
+}
+
+// 1) quartz.config.ts
+const configFile = path.join(quartzDir, "quartz.config.ts")
+let config = fs.readFileSync(configFile, "utf8")
+const edits = [
+  [/pageTitle: ".*?",/, `pageTitle: ${JSON.stringify(siteTitle)},`],
+  [/locale: ".*?",/, `locale: "ja-JP",`],
+  [/baseUrl: ".*?",/, `baseUrl: ${JSON.stringify(baseUrl)},`],
+  [/ignorePatterns: \[.*?\],/, `ignorePatterns: ["private", "templates", ".obsidian", ".trash", ".github"],`],
+  [/^\s*Plugin\.CustomOgImages\(\),\s*$/m, "      // Plugin.CustomOgImages(), // 反映を速くするため無効化"],
+  // 見た目（Zen 風）：日本語が読みやすいフォント
+  [/header: ".*?",/, `header: "Noto Sans JP",`],
+  [/body: ".*?",/, `body: "Noto Sans JP",`],
+  [/code: ".*?",/, `code: "JetBrains Mono",`],
+  // 目次に h4 まで載せる
+  [/Plugin\.TableOfContents\(\)/, "Plugin.TableOfContents({ maxDepth: 4 })"],
+]
+for (const [re, rep] of edits) {
+  if (!re.test(config)) {
+    console.error(`::error::quartz.config.ts に ${re} が見つかりません`)
+    process.exit(1)
+  }
+  config = config.replace(re, rep)
+}
+fs.writeFileSync(configFile, config)
+
+// 2) quartz.layout.ts（Web 上の表示名を埋め込む）
+const names = fs.readFileSync(path.join(here, "web-names.json"), "utf8").trim()
+const layout = fs.readFileSync(path.join(here, "quartz.layout.ts"), "utf8")
+if (!layout.includes("__WEB_NAMES__")) {
+  console.error("::error::quartz.layout.ts に __WEB_NAMES__ がありません")
+  process.exit(1)
+}
+fs.writeFileSync(path.join(quartzDir, "quartz.layout.ts"), layout.replace("__WEB_NAMES__", names))
+
+// 3) 見た目の CSS
+fs.copyFileSync(path.join(here, "custom.scss"), path.join(quartzDir, "quartz", "styles", "custom.scss"))
+
+console.log("Quartz の設定を書き換えました")
+console.log(config.match(/^.*(pageTitle|locale|baseUrl|ignorePatterns|CustomOgImages|TableOfContents|header|body|code):.*$/gm)?.join("\n") ?? "")
