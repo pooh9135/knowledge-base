@@ -55,7 +55,6 @@ const sharedScript = `
         if (icon) icon.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       });
     },
-    'readonly': () => window.obNotice('このサイトは閲覧専用です。編集は Obsidian で行ってください。'),
   };
   document.addEventListener('click', (e) => {
     const btn = e.target.closest && e.target.closest('[data-ob-action]');
@@ -84,10 +83,9 @@ export const Ribbon = (() => {
       <div class="ob-ribbon-actions">
         <IconButton icon="search" label="クイックスイッチャーを開く" action="search" />
         <IconButton icon="git-fork" label="グラフビューを開く" action="graph" />
-        <IconButton icon="layout-dashboard" label="新規キャンバスを作成" action="readonly" />
-        <IconButton icon="calendar-days" label="今日のデイリーノートを開く" action="readonly" />
-        <IconButton icon="files" label="テンプレートを挿入" action="readonly" />
-        <IconButton icon="terminal" label="コマンドパレットを開く" action="search" />
+      </div>
+      <div class="ob-ribbon-bottom">
+        <IconButton icon="panel-right" label="右サイドバーを開閉" action="toggle-right" />
       </div>
     </div>
   )
@@ -104,13 +102,7 @@ export const LeftHeader = (() => {
         <div class="ob-tab-header-icons">
           <IconButton icon="folder-closed" label="ファイル" cls="is-active" />
           <IconButton icon="search" label="検索" action="search" />
-          <IconButton icon="bookmark" label="ブックマーク" action="readonly" />
         </div>
-      </div>
-      <div class="ob-nav-header">
-        <IconButton icon="square-pen" label="新規ノート" action="readonly" />
-        <IconButton icon="folder-plus" label="新規フォルダ" action="readonly" />
-        <IconButton icon="arrow-up-narrow-wide" label="並べ替えの順序を変更" action="readonly" />
         <IconButton icon="chevrons-down-up" label="すべて折りたたむ" action="collapse-all" />
       </div>
     </div>
@@ -130,7 +122,8 @@ export const VaultProfile = (() => {
         </a>
         <div class="ob-vault-actions">
           <IconButton icon="circle-help" label="ヘルプ（公開の仕組み）" href={`${home}/公開の仕組み`} />
-          <IconButton icon="settings" label="ダーク / ライトを切り替え" action="theme" />
+          <IconButton icon="sun" label="ライトモードにする" action="theme" cls="ob-theme-to-light" />
+          <IconButton icon="moon" label="ダークモードにする" action="theme" cls="ob-theme-to-dark" />
         </div>
       </div>
     )
@@ -167,10 +160,6 @@ export const TabHeader = (() => {
                 <Icon name="x" size={14} />
               </a>
             </div>
-            <IconButton icon="plus" label="新規タブ" action="search" cls="ob-new-tab" />
-          </div>
-          <div class="ob-tabbar-right">
-            <IconButton icon="chevron-down" label="タブの一覧" action="search" />
           </div>
         </div>
         <div class="ob-view-header">
@@ -189,10 +178,7 @@ export const TabHeader = (() => {
             ))}
             <span class="ob-crumb-current">{title}</span>
           </div>
-          <div class="ob-view-actions">
-            <IconButton icon="book-open" label="読み取りビュー（閲覧専用）" action="readonly" />
-            <IconButton icon="ellipsis-vertical" label="その他のオプション" action="readonly" />
-          </div>
+          <div class="ob-view-actions"></div>
         </div>
       </div>
     )
@@ -285,7 +271,6 @@ export const RightPanel = ((opts: { tabs: PanelTab[]; defaultTab: string }) => {
             </button>
           ))}
         </div>
-        <IconButton icon="panel-right" label="右サイドバーを開閉" action="toggle-right" />
       </div>
       <div class="ob-panels">
         {opts.tabs.map((t) => (

@@ -214,16 +214,10 @@ body {
   }
 }
 
-// 右サイドバーの開閉ボタンは、閉じたあとも右上に残す
-html.ob-right-collapsed .ob-right-panel > .ob-tab-header > .clickable-icon[data-ob-action="toggle-right"] {
-  position: fixed;
-  right: 8px;
-  top: 6px;
-  z-index: 5;
-}
-
 // ════════════════════ リボン（左端の縦のアイコン列） ════════════════════
+// サイドバーの開閉ボタンはリボンにあるので、サイドバーを閉じてもリボンは必ず表示する
 .ob-ribbon {
+  visibility: visible;
   position: fixed;
   left: 0;
   top: 0;
@@ -243,11 +237,16 @@ html.ob-right-collapsed .ob-right-panel > .ob-tab-header > .clickable-icon[data-
     justify-content: center;
     flex-shrink: 0;
   }
-  & .ob-ribbon-actions {
+  & .ob-ribbon-actions,
+  & .ob-ribbon-bottom {
     display: flex;
     flex-direction: column;
     gap: 4px;
     padding-top: 4px;
+  }
+  & .ob-ribbon-bottom {
+    margin-top: auto;
+    padding: 0 0 10px;
   }
   & .clickable-icon {
     padding: 6px;
@@ -537,6 +536,7 @@ html.ob-right-collapsed .ob-right-panel > .ob-tab-header > .clickable-icon[data-
     display: flex;
     gap: 2px;
     flex-shrink: 0;
+    width: 64px;
   }
 
   & .ob-view-title {
@@ -1200,4 +1200,25 @@ html.ob-right-collapsed .graph > .global-graph-outer > .global-graph-container {
   .page-title a {
     color: var(--ob-text-normal);
   }
+}
+
+// テーマ切り替えボタン：今のテーマと逆のアイコンだけを出す
+.ob-theme-to-dark {
+  display: inline-flex;
+}
+.ob-theme-to-light {
+  display: none;
+}
+:root[saved-theme="dark"] {
+  & .ob-theme-to-dark {
+    display: none;
+  }
+  & .ob-theme-to-light {
+    display: inline-flex;
+  }
+}
+
+// 左サイドバーのヘッダー（ファイル / 検索 タブ ＋ すべて折りたたむ）
+.ob-left-header .ob-tab-header {
+  margin-bottom: 4px;
 }
