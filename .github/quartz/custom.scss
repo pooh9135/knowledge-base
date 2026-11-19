@@ -1235,3 +1235,68 @@ html.ob-right-collapsed .graph > .global-graph-outer > .global-graph-container {
     display: none;
   }
 }
+
+// ════════════════════ タグ・フォルダの一覧ページ ════════════════════
+// 本文と同じ幅（700px）に揃える
+.center > .popover-hint {
+  max-width: var(--ob-line-width);
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 0 32px 50vh;
+  box-sizing: content-box;
+  & > article {
+    padding: 0;
+  }
+}
+
+.page-listing {
+  margin-top: 0.5em;
+  & > p {
+    color: var(--ob-text-muted);
+    font-size: 14px;
+  }
+  & .section-ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  & .section-li {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--ob-border);
+    & > .section {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 10px 4px;
+      & > .desc {
+        flex: 1 1 auto;
+        min-width: 0;
+        order: 1;
+        & h3 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 1.4;
+        }
+      }
+      & > .meta {
+        order: 2;
+        flex-shrink: 0;
+        margin: 0;
+        white-space: nowrap;
+        font-size: 13px;
+        color: var(--ob-text-faint);
+      }
+      & > .tags {
+        display: none;
+      }
+    }
+  }
+}
+
+@media all and ($mobile) {
+  .center > .popover-hint {
+    padding: 0 0 4rem;
+  }
+}

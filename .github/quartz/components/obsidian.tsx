@@ -56,6 +56,16 @@ const sharedScript = `
       });
     },
   };
+  // ファイル一覧：フォルダの行のどこを押しても開閉できるようにする
+  // （Quartz 標準では、フォルダ名の文字を押しても開閉されない）
+  document.addEventListener('click', (e) => {
+    const row = e.target.closest && e.target.closest('.explorer .folder-container');
+    if (!row) return;
+    const icon = row.querySelector(':scope > .folder-icon');
+    if (!icon || icon === e.target || icon.contains(e.target)) return;
+    e.preventDefault(); e.stopPropagation();
+    icon.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  }, true);
   document.addEventListener('click', (e) => {
     const btn = e.target.closest && e.target.closest('[data-ob-action]');
     if (!btn) return;

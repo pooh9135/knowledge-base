@@ -5,7 +5,10 @@ import fs from "node:fs"
 import path from "node:path"
 
 const [publicDir, namesFile] = process.argv.slice(2)
-const names = Object.entries(JSON.parse(fs.readFileSync(namesFile, "utf8")))
+const names = Object.entries(JSON.parse(fs.readFileSync(namesFile, "utf8"))).flatMap(([from, to]) =>
+  // フォルダページのタイトルでは空白がハイフンになる（例: "Liz-Atlas/資料"）ので、その形も置き換える
+  from.includes(" ") ? [[from, to], [from.replaceAll(" ", "-"), to]] : [[from, to]],
+)
 const rename = (s) => names.reduce((acc, [from, to]) => acc.split(from).join(to), s)
 
 function* walk(dir) {
