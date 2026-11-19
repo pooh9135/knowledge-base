@@ -1326,7 +1326,7 @@ html.ob-right-collapsed .graph > .global-graph-outer > .global-graph-container {
 // Vault で使っているテーマ。上の既定テーマの見た目を、ここで Sodalite の値に上書きする。
 // ════════════════════════════════════════════════════════════════════════════
 :root {
-  --sd-titlebar-h: 24px;
+  --sd-titlebar-h: 0px; // 上部のタイトル帯は使わない
   --sd-note-header-h: 56px;
   --sd-heading-font: "Futura Md BT", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, "Yu Gothic UI", "Hiragino Sans", Meiryo, sans-serif;
@@ -1418,48 +1418,13 @@ body {
   border-radius: 0;
 }
 
-// ─────────── 上部のタイトル帯（ウィンドウ名＋ステータスバー） ───────────
-.ob-titlebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--sd-titlebar-h);
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  padding-left: 64px;
-  font-size: 12px;
-  line-height: var(--sd-titlebar-h);
-  color: var(--ob-text-normal);
-  background: var(--sd-gradient-base) fixed;
-  white-space: nowrap;
-  overflow: hidden;
-
-  & .ob-titlebar-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-  }
-  & .ob-titlebar-theme {
-    opacity: 0.5;
-  }
-  & .ob-status-bar {
-    position: static;
-    margin-left: auto;
-    padding: 0 12px;
-    background: none;
-    border: none;
-    border-radius: 0;
-    font-size: 12px;
-    color: var(--sd-text-muted);
-    flex-shrink: 0;
-  }
-}
-@media (max-width: 1280px) {
-  .ob-titlebar .ob-status-bar {
-    display: none;
-  }
+// ─────────── ステータスバー（右下） ───────────
+.ob-status-bar {
+  background: var(--sd-gradient-content) fixed;
+  border-top: 2px solid var(--sd-border);
+  border-left: 2px solid var(--sd-border);
+  border-top-left-radius: 8px;
+  color: var(--sd-text-muted);
 }
 
 // ─────────── 全体の枠（グラデーションと 2px の境界線） ───────────
@@ -1712,9 +1677,6 @@ a.ob-tree-item.internal {
 
 // ─────────── スマホ ───────────
 @media all and ($mobile) {
-  .ob-titlebar {
-    display: none;
-  }
   .ob-view-header .ob-view-title .ob-crumb-current {
     font-size: 26px;
   }

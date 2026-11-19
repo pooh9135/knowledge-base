@@ -453,22 +453,14 @@ const statusScript = `
 `
 
 export const StatusBar = (() => {
-  const C: QuartzComponent = ({ fileData, allFiles, cfg }: QuartzComponentProps) => {
+  const C: QuartzComponent = ({ fileData, allFiles }: QuartzComponentProps) => {
     const slug = simplifySlug(fileData.slug!)
     const backlinks = allFiles.filter((f) => f.links?.includes(slug)).length
-    const title = (fileData.frontmatter?.title as string | undefined) ?? cfg.pageTitle
-    // Sodalite：画面上部のタイトル帯（ウィンドウ名）。ステータスバーもこの帯の右側に出る
     return (
-      <div class="ob-titlebar">
-        <span class="ob-titlebar-text">
-          {title} - {cfg.pageTitle}
-          <span class="ob-titlebar-theme"> - Sodalite v0.10.0</span>
-        </span>
       <div class="ob-status-bar">
         <span class="ob-status-item">{backlinks} 件のバックリンク</span>
         <span class="ob-status-item ob-words"></span>
         <span class="ob-status-item ob-chars"></span>
-      </div>
       </div>
     )
   }
