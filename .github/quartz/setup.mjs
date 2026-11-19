@@ -24,10 +24,8 @@ const edits = [
   [/baseUrl: ".*?",/, `baseUrl: ${JSON.stringify(baseUrl)},`],
   [/ignorePatterns: \[.*?\],/, `ignorePatterns: ["private", "templates", ".obsidian", ".trash", ".github"],`],
   [/^\s*Plugin\.CustomOgImages\(\),\s*$/m, "      // Plugin.CustomOgImages(), // 反映を速くするため無効化"],
-  // 見た目（Zen 風）：日本語が読みやすいフォント
-  [/header: ".*?",/, `header: "Noto Sans JP",`],
-  [/body: ".*?",/, `body: "Noto Sans JP",`],
-  [/code: ".*?",/, `code: "JetBrains Mono",`],
+  // 見た目（Obsidian 既定テーマ）：Obsidian と同じく OS のフォントを使う（Google Fonts は読み込まない）
+  [/fontOrigin: ".*?",/, `fontOrigin: "local",`],
   // 目次に h4 まで載せる
   [/Plugin\.TableOfContents\(\)/, "Plugin.TableOfContents({ maxDepth: 4 })"],
 ]
@@ -52,5 +50,22 @@ fs.writeFileSync(path.join(quartzDir, "quartz.layout.ts"), layout.replace("__WEB
 // 3) 見た目の CSS
 fs.copyFileSync(path.join(here, "custom.scss"), path.join(quartzDir, "quartz", "styles", "custom.scss"))
 
+// 3.5) エクスプローラーが現在のノートを表示するとき、ページ全体までスクロールしないようにする
+const explorerScript = path.join(quartzDir, "quartz", "components", "scripts", "explorer.inline.ts")
+const exSrc = fs.readFileSync(explorerScript, "utf8")
+const exNeedle = 'activeElement.scrollIntoView({ behavior: "smooth" })'
+if (!exSrc.includes(exNeedle)) {
+  console.error("::error::explorer.inline.ts のスクロール処理が見つかりません")
+  process.exit(1)
+}
+fs.writeFileSync(explorerScript, exSrc.replace(exNeedle, 'activeElement.scrollIntoView({ block: "nearest" })'))
+
+// 4) Obsidian 風の部品
+const compDir = path.join(quartzDir, "quartz", "components", "obsidian")
+fs.mkdirSync(compDir, { recursive: true })
+for (const f of fs.readdirSync(path.join(here, "components"))) {
+  fs.copyFileSync(path.join(here, "components", f), path.join(compDir, f))
+}
+
 console.log("Quartz の設定を書き換えました")
-console.log(config.match(/^.*(pageTitle|locale|baseUrl|ignorePatterns|CustomOgImages|TableOfContents|header|body|code):.*$/gm)?.join("\n") ?? "")
+console.log(config.match(/^.*(pageTitle|locale|baseUrl|ignorePatterns|CustomOgImages|TableOfContents|fontOrigin):.*$/gm)?.join("\n") ?? "")
