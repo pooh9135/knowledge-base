@@ -84,9 +84,6 @@ export const Ribbon = (() => {
         <IconButton icon="search" label="クイックスイッチャーを開く" action="search" />
         <IconButton icon="git-fork" label="グラフビューを開く" action="graph" />
       </div>
-      <div class="ob-ribbon-bottom">
-        <IconButton icon="panel-right" label="右サイドバーを開閉" action="toggle-right" />
-      </div>
     </div>
   )
   C.beforeDOMLoaded = restoreLayoutScript
@@ -152,6 +149,7 @@ export const TabHeader = (() => {
     if (isFolderPage && crumbs.length > 0 && slug !== "index") crumbs.pop()
     return (
       <div class="ob-header">
+        <IconButton icon="panel-right" label="右サイドバーを開閉" action="toggle-right" cls="ob-right-toggle" />
         <div class="ob-tabbar">
           <div class="ob-tabs">
             <div class="ob-tab is-active" title={title}>

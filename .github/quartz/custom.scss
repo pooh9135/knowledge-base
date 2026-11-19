@@ -1222,3 +1222,16 @@ html.ob-right-collapsed .graph > .global-graph-outer > .global-graph-container {
 .ob-left-header .ob-tab-header {
   margin-bottom: 4px;
 }
+
+// 右サイドバーの開閉ボタン：画面の右上に常に表示（閉じても押せる）
+.ob-right-toggle {
+  position: fixed;
+  top: 5px;
+  right: 8px;
+  z-index: 5;
+}
+@media all and ($mobile) {
+  .ob-right-toggle {
+    display: none;
+  }
+}
